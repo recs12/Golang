@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/user"
 )
 
 // join home directory and user directory
+// create a folder PT.SE.RenderAndProps
 var configPath = "C:\\Users\\recs\\OneDrive - Premier Tech\\Bureau\\Golang\\userConfig.json"
 
 func main() {
@@ -19,34 +19,23 @@ func main() {
 		log.Fatal(err)
 	}
 
-	x := []string{"{\n",
+	// loop trough the list of string
+	configContent := []string{
+		"{\n",
 		"\t\"User\": \"recs\",\n",
 		"\t\"Password\": \"recs\",\n",
 		"\t\"Group\": \"Engineering\",\n",
+		"\t\"Role\": \"Designer\",\n",
+		"\t\"Server\": \"UAT_TC\",\n",
+		"\t\"DownloadFolder\": \"C:\\\\Repos\"\n",
+		"}\n",
 	}
 
-	file.WriteString("{\n")
-	file.WriteString("\t\"User\": \"recs\",\n")
-	file.WriteString("\t\"Password\": \"recs\",\n")
-	file.WriteString("\t\"Group\": \"Engineering\",\n")
-	file.WriteString("\t\"Role\": \"Designer\",\n")
-	file.WriteString("\t\"Server\": \"UAT_TC\",\n")
-	file.WriteString("\t\"DownloadFolder\": \"C:\\Repos\",\n")
-	file.WriteString("{\n")
+	for _, line := range configContent {
+		file.WriteString(line)
+	}
 
 	fmt.Println("[+] userConfig.json created successfully")
 	defer file.Close()
 
-	user, err := user.Current()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-
-	username := user.Username
-	homedir := user.HomeDir
-	name := user.Name
-
-	fmt.Printf("Username: %s\n", username)
-	fmt.Printf("Homedir: %s\n", homedir)
-	fmt.Printf("Name: %s\n", name)
 }
