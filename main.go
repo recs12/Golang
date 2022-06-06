@@ -1,68 +1,50 @@
 package main
 
-//todo: prompt user for configuration parameters.
-//todo: split the code in small functions.
-
 import (
 	"bufio"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
-// join home directory and user directory
 // create a folder PT.SE.RenderAndProps
-var configPath = "C:\\Users\\recs\\OneDrive - Premier Tech\\Bureau\\Golang\\userConfig.json"
+// var configPath = "C:\\Users\\recs\\OneDrive - Premier Tech\\Bureau\\Golang\\userConfig.json"
+// var configPath = "C:\\repos\\userConfig.json"
+var configPath = "C:\\repos\\PT.SE\\PT.SE.RenderAndProps\\userConfig.json"
+
+func trimWhiteSpace(_user string) string {
+	return _user[:len(_user)-2]
+}
+
+func userPrompter(reader *bufio.Reader, print string) string {
+	fmt.Println(print)
+	entry, _ := reader.ReadString('\n')
+	entry = trimWhiteSpace(entry)
+	entry = strings.Trim(entry, `"`)
+	entry = strings.ReplaceAll(entry, "\\", "\\\\")
+	return entry
+}
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("Enter User ID:")
-	_user, _ := reader.ReadString('\n')
-	fmt.Println(_user)
-
-	fmt.Println("Enter password:")
-	_password, _ := reader.ReadString('\n')
-	fmt.Println(_password)
-
-	fmt.Println("Enter Group:")
-	_group, _ := reader.ReadString('\n')
-	fmt.Println(_group)
-
-	fmt.Println("Enter Role:")
-	_role, _ := reader.ReadString('\n')
-	fmt.Println(_role)
-
-	fmt.Println("Enter Server:")
-	_server, _ := reader.ReadString('\n')
-	fmt.Println(_server)
-
-	fmt.Println("Enter Folder:")
-	_folder, _ := reader.ReadString('\n')
-	fmt.Println(_folder)
+	_user := userPrompter(reader, "Enter User ID:")
+	_password := userPrompter(reader, "Enter password:")
+	_group := userPrompter(reader, "Enter Group:")
+	_role := userPrompter(reader, "Enter Role:")
+	_server := userPrompter(reader, "Enter Server:")
+	_folder := userPrompter(reader, "Enter the path of the folder where you want to image to be downloaded:")
 
 	file, err := os.Create(configPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// loop trough the list of string
-	configContent := []string{
-		"{\n",
-		"\t\"User\": \"recs\",\n",
-		"\t\"Password\": \"recs\",\n",
-		"\t\"Group\": \"Engineering\",\n",
-		"\t\"Role\": \"Designer\",\n",
-		"\t\"Server\": \"UAT_TC\",\n",
-		"\t\"DownloadFolder\": \"C:\\\\Repos\"\n",
-		"}\n",
-	}
-
-	for _, line := range configContent {
-		file.WriteString(line)
-	}
+	var configContent = fmt.Sprintf(`{"User": "%s","Password": "%s","Group": "%s","Role": "%s","Server": "%s","DownloadFolder": "%s"}`, _user, _password, _group, _role, _server, _folder)
+	file.WriteString(configContent)
 	defer file.Close()
 
 	fmt.Println("[+] userConfig.json created successfully")
-
+	fmt.Println(configPath)
 }
